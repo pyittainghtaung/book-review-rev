@@ -1,2 +1,2 @@
 # book-review-rev
- Book Review Projject
+ Book Review Project
