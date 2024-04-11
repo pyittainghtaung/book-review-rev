@@ -84,9 +84,9 @@ class BookController extends Controller
         // ]);
 
         $cacheKey = 'book:' . $book->id;
-        $book = cache()->remember($cacheKey, 3600, $book->load([
+        $book = cache()->remember($cacheKey, 3600, fn () => $book->load([
             'reviews' => fn ($query) => $query->latest()
-        ])  );
+        ]));
 
 
         return view('books.show', ['book' => $book]);
