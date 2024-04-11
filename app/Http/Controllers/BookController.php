@@ -75,14 +75,21 @@ class BookController extends Controller
 
         //  ***************
         //Another Style  Sort book->reviews relationship to latest() order ! You can alsoe filter relationship
-        return view('books.show', [
-            'book' => $book->load([
-                'reviews' => fn ($query) => $query->latest()
-            ])
-        ]);
 
-        // *************
+        //Change for Invalidation cache
+        // return view('books.show', [
+        //     'book' => $book->load([
+        //         'reviews' => fn ($query) => $query->latest()
+        //     ])
+        // ]);
 
+        $cacheKey = 'book:' . $book->id;
+        $book = cache()->remember($cacheKey, 3600, $book->load([
+            'reviews' => fn ($query) => $query->latest()
+        ])  );
+
+
+        return view('books.show', ['book' => $book]);
     }
 
     /**
