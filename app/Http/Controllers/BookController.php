@@ -36,10 +36,16 @@ class BookController extends Controller
             'popular_last_6months' => $books->popularLast6Months(),
             'highest_rated_last_month' => $books->highestRatedLastMonth(),
             'highest_rated_last_6months' => $books->highestRatedLast6Months(),
-            default => $books->latest()
+            default => $books->latest()->withAvgRating()->withReviewsCount()
         };
         $cacheKey = 'books:' . $filter . ':' . $title;
-        $books = cache()->remember($cacheKey, 3600, fn () => $books->get());  //<------ The same Result
+        $books =
+            // cache()->remember(
+            //     $cacheKey,
+            //     3600,
+            //     fn () =>
+                 $books->paginate(10);
+           // );  //<------ The same Result
         // This is another style  <-----The same Result
         // $books = cache()->remember($cacheKey, 3600, function () use ($books) {
         //     return $books->get();
@@ -67,7 +73,7 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Book $book)
+    public function show(int $id)
     {
         //The simple style
         // return view('books.show',['book'=>$book]);
@@ -83,10 +89,15 @@ class BookController extends Controller
         //     ])
         // ]);
 
-        $cacheKey = 'book:' . $book->id;
-        $book = cache()->remember($cacheKey, 3600, fn () => $book->load([
-            'reviews' => fn ($query) => $query->latest()
-        ]));
+        $cacheKey = 'book:' . $id;
+        $book = cache()->remember(
+            $cacheKey,
+            3600,
+            fn () =>
+            Book::with([
+                'reviews' => fn ($query) => $query->latest()
+            ])->withAvgRating()->withReviewCount()->findOrFail($id)
+        );
 
 
         return view('books.show', ['book' => $book]);

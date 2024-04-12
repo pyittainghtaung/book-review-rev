@@ -58,9 +58,9 @@
             </li>
         @endforelse
     </ul>
-    {{-- @if ($books->count())
+    @if ($books->count())
         <nav class="mt-4">
             {{ $books->links() }}
         </nav>
-    @endif --}}
+    @endif
 @endsection
