@@ -44,7 +44,7 @@ class BookController extends Controller
             //     $cacheKey,
             //     3600,
             //     fn () =>
-                 $books->paginate(10);
+                 $books->paginate(10)->withQueryString();
            // );  //<------ The same Result
         // This is another style  <-----The same Result
         // $books = cache()->remember($cacheKey, 3600, function () use ($books) {
@@ -96,7 +96,7 @@ class BookController extends Controller
             fn () =>
             Book::with([
                 'reviews' => fn ($query) => $query->latest()
-            ])->withAvgRating()->withReviewCount()->findOrFail($id)
+            ])->withAvgRating()->withReviewsCount()->findOrFail($id)
         );
 
 
